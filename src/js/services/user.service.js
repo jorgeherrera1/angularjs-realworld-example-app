@@ -1,105 +1,111 @@
-export default class User {
-  constructor(JWT, AppConstants, $http, $state, $q) {
-    'ngInject';
+// Import necessary Angular modules
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, of, throwError } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 
-    this._JWT = JWT;
-    this._AppConstants = AppConstants;
-    this._$http = $http;
-    this._$state = $state;
-    this._$q = $q;
+// JWT service will be injected - assumed to be updated to Angular as well
+import { JWT } from './jwt.service';
+import { AppConstants } from '../config/app.constants';
 
-    this.current = null;
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  // Current user data
+  current: any = null;
 
-  }
+  constructor(
+    private jwt: JWT,
+    private appConstants: AppConstants,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-
-  attemptAuth(type, credentials) {
-    let route = (type === 'login') ? '/login' : '';
-    return this._$http({
-      url: this._AppConstants.api + '/users' + route,
-      method: 'POST',
-      data: {
-        user: credentials
-      }
-    }).then(
-      (res) => {
-        this._JWT.save(res.data.user.token);
-        this.current = res.data.user;
-
-        return res;
-      }
+  // Attempt authentication (login or register)
+  attemptAuth(type: string, credentials: any): Observable<any> {
+    // Determine the route based on auth type
+    const route = (type === 'login') ? '/login' : '';
+    
+    return this.http.post(
+      `${this.appConstants.api}/users${route}`,
+      { user: credentials }
+    ).pipe(
+      tap((res: any) => {
+        // Save JWT token and update current user
+        this.jwt.save(res.user.token);
+        this.current = res.user;
+      })
     );
   }
 
-  update(fields) {
-    return this._$http({
-      url:  this._AppConstants.api + '/user',
-      method: 'PUT',
-      data: { user: fields }
-    }).then(
-      (res) => {
-        this.current = res.data.user;
-        return res.data.user;
-      }
-    )
+  // Update user profile
+  update(fields: any): Observable<any> {
+    return this.http.put(
+      `${this.appConstants.api}/user`,
+      { user: fields }
+    ).pipe(
+      map((res: any) => {
+        // Update current user with response data
+        this.current = res.user;
+        return res.user;
+      })
+    );
   }
 
-  logout() {
+  // Logout user
+  logout(): void {
     this.current = null;
-    this._JWT.destroy();
-    this._$state.go(this._$state.$current, null, { reload: true });
-  }
-
-  verifyAuth() {
-    let deferred = this._$q.defer();
-
-    // check for JWT token
-    if (!this._JWT.get()) {
-      deferred.resolve(false);
-      return deferred.promise;
-    }
-
-    if (this.current) {
-      deferred.resolve(true);
-
-    } else {
-      this._$http({
-        url: this._AppConstants.api + '/user',
-        method: 'GET',
-        headers: {
-          Authorization: 'Token ' + this._JWT.get()
-        }
-      }).then(
-        (res) => {
-          this.current = res.data.user;
-          deferred.resolve(true);
-        },
-
-        (err) => {
-          this._JWT.destroy();
-          deferred.resolve(false);
-        }
-      )
-    }
-
-    return deferred.promise;
-  }
-
-
-  ensureAuthIs(bool) {
-    let deferred = this._$q.defer();
-
-    this.verifyAuth().then((authValid) => {
-      if (authValid !== bool) {
-        this._$state.go('app.home')
-        deferred.resolve(false);
-      } else {
-        deferred.resolve(true);
-      }
-
+    this.jwt.destroy();
+    // Navigate to current route with reload
+    // Angular equivalent of $state.go with reload
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([this.router.url]);
     });
-
-    return deferred.promise;
   }
 
+  // Verify if user is authenticated
+  verifyAuth(): Promise<boolean> {
+    // Check for JWT token
+    if (!this.jwt.get()) {
+      return Promise.resolve(false);
+    }
+
+    // If we already have current user, resolve immediately
+    if (this.current) {
+      return Promise.resolve(true);
+    } else {
+      // Otherwise fetch user data from API
+      const headers = new HttpHeaders({
+        'Authorization': 'Token ' + this.jwt.get()
+      });
+
+      return this.http.get(
+        `${this.appConstants.api}/user`,
+        { headers }
+      ).pipe(
+        map((res: any) => {
+          this.current = res.user;
+          return true;
+        }),
+        catchError(err => {
+          this.jwt.destroy();
+          return of(false);
+        })
+      ).toPromise();
+    }
+  }
+
+  // Ensure authentication state matches expected value
+  ensureAuthIs(bool: boolean): Promise<boolean> {
+    return this.verifyAuth().then((authValid) => {
+      if (authValid !== bool) {
+        this.router.navigate(['/']);
+        return false;
+      } else {
+        return true;
+      }
+    });
+  }
 }

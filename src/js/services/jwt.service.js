@@ -1,21 +1,27 @@
-export default class JWT {
-  constructor(AppConstants, $window) {
-    'ngInject';
+// jwt.service.ts
+import { Injectable } from '@angular/core';
+import { AppConstants } from '../config/app.constants';
 
-    this._AppConstants = AppConstants;
-    this._$window = $window;
+@Injectable({
+  providedIn: 'root'
+})
+export class JwtService {
+  
+  constructor(private appConstants: AppConstants) {
+    // Angular DI system will inject AppConstants
+    // Removed 'ngInject' as it's not needed in Angular
   }
 
-  save(token) {
-    this._$window.localStorage[this._AppConstants.jwtKey] = token;
+  save(token: string): void {
+    // Using window directly instead of $window service
+    window.localStorage[this.appConstants.jwtKey] = token;
   }
 
-  get() {
-    return this._$window.localStorage[this._AppConstants.jwtKey];
+  get(): string {
+    return window.localStorage[this.appConstants.jwtKey];
   }
 
-  destroy() {
-    this._$window.localStorage.removeItem(this._AppConstants.jwtKey);
+  destroy(): void {
+    window.localStorage.removeItem(this.appConstants.jwtKey);
   }
-
 }

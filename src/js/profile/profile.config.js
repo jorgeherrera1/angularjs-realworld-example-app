@@ -1,39 +1,63 @@
-function ProfileConfig($stateProvider) {
-  'ngInject';
+// profile-routing.module.ts
 
-  $stateProvider
-  .state('app.profile', {
-    abstract: true,
-    url: '/@:username',
-    controller: 'ProfileCtrl',
-    controllerAs: '$ctrl',
-    templateUrl: 'profile/profile.html',
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+import { ProfileComponent } from './profile.component';
+import { ProfileArticlesComponent } from './profile-articles.component';
+import { ProfileResolver } from './profile.resolver';
+
+// Convert UI-Router states to Angular Router routes
+// Abstract state becomes a parent route with children
+const routes: Routes = [
+  {
+    path: '@:username',
+    component: ProfileComponent,
     resolve: {
-      profile: function(Profile, $state, $stateParams) {
-        return Profile.get($stateParams.username).then(
-          (profile) => profile,
-          (err) => $state.go('app.home')
-        )
+      profile: ProfileResolver
+    },
+    children: [
+      {
+        path: '',
+        component: ProfileArticlesComponent,
+        data: { title: 'Profile' }
+      },
+      {
+        path: 'favorites',
+        component: ProfileArticlesComponent,
+        data: { title: 'Favorites' }
       }
-    }
+    ]
+  }
+];
 
-  })
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class ProfileRoutingModule { }
 
-  .state('app.profile.main', {
-    url:'',
-    controller: 'ProfileArticlesCtrl',
-    controllerAs: '$ctrl',
-    templateUrl: 'profile/profile-articles.html',
-    title: 'Profile'
-  })
-  .state('app.profile.favorites', {
-    url:'/favorites',
-    controller: 'ProfileArticlesCtrl',
-    controllerAs: '$ctrl',
-    templateUrl: 'profile/profile-articles.html',
-    title: 'Favorites'
-  });
+// Add resolver to handle profile loading and error redirection
+// This replaces the resolve function in the original config
+import { Injectable } from '@angular/core';
+import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { ProfileService } from '../services/profile.service';
 
-};
+@Injectable()
+export class ProfileResolver implements Resolve<any> {
+  constructor(
+    private profileService: ProfileService,
+    private router: Router
+  ) {}
 
-export default ProfileConfig;
+  resolve(route: ActivatedRouteSnapshot): Observable<any> {
+    return this.profileService.get(route.params['username']).pipe(
+      catchError(err => {
+        this.router.navigateByUrl('/');
+        return of(null);
+      })
+    );
+  }
+}

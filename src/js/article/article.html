@@ -4,18 +4,17 @@
   <div class="banner">
     <div class="container">
 
-      <h1 ng-bind="::$ctrl.article.title"></h1>
+      <!-- Changed ng-bind to Angular interpolation syntax -->
+      <h1>{{ article.title }}</h1>
 
       <div class="article-meta">
         <!-- Show author info + favorite & follow buttons -->
-        <article-actions article="$ctrl.article"></article-actions>
-
+        <!-- Updated to use property binding syntax -->
+        <app-article-actions [article]="article"></app-article-actions>
       </div>
 
     </div>
   </div>
-
-
 
   <!-- Main view. Contains article html and comments -->
   <div class="container page">
@@ -24,11 +23,13 @@
     <div class="row article-content">
       <div class="col-xs-12">
 
-        <div ng-bind-html="::$ctrl.article.body"></div>
+        <!-- Changed ng-bind-html to [innerHTML] with sanitization -->
+        <div [innerHTML]="article.body | safeHtml"></div>
 
         <ul class="tag-list">
+          <!-- Changed ng-repeat to *ngFor -->
           <li class="tag-default tag-pill tag-outline"
-            ng-repeat="tag in ::$ctrl.article.tagList">
+            *ngFor="let tag of article.tagList">
             {{ tag }}
           </li>
         </ul>
@@ -41,7 +42,8 @@
     <div class="article-actions">
 
       <!-- Show author info + favorite & follow buttons -->
-      <article-actions article="$ctrl.article"></article-actions>
+      <!-- Updated to use property binding syntax -->
+      <app-article-actions [article]="article"></app-article-actions>
 
     </div>
 
@@ -49,18 +51,25 @@
     <div class="row">
       <div class="col-xs-12 col-md-8 offset-md-2">
 
-        <div show-authed="true">
-          <list-errors from="$ctrl.commentForm.errors"></list-errors>
-          <form class="card comment-form" ng-submit="$ctrl.addComment()">
-            <fieldset ng-disabled="$ctrl.commentForm.isSubmitting">
+        <!-- Changed show-authed directive to *appShowAuthed -->
+        <div *appShowAuthed="true">
+          <!-- Updated to use property binding syntax -->
+          <app-list-errors [errors]="commentForm.errors"></app-list-errors>
+          <!-- Changed ng-submit to (submit) -->
+          <form class="card comment-form" (submit)="addComment()">
+            <!-- Changed ng-disabled to [disabled] -->
+            <fieldset [disabled]="commentForm.isSubmitting">
               <div class="card-block">
+                <!-- Changed ng-model to [(ngModel)] for two-way binding -->
                 <textarea class="form-control"
                   placeholder="Write a comment..."
                   rows="3"
-                  ng-model="$ctrl.commentForm.body"></textarea>
+                  [(ngModel)]="commentForm.body"
+                  name="comment"></textarea>
               </div>
               <div class="card-footer">
-                <img ng-src="{{::$ctrl.currentUser.image}}" class="comment-author-img" />
+                <!-- Changed ng-src to [src] -->
+                <img [src]="currentUser.image" class="comment-author-img" />
                 <button class="btn btn-sm btn-primary" type="submit">
                  Post Comment
                 </button>
@@ -69,21 +78,21 @@
           </form>
         </div>
 
-        <div show-authed="false">
-          <a ui-sref="app.login">Sign in</a> or <a ui-sref="app.register">sign up</a> to add comments on this article.
+        <!-- Changed show-authed directive to *appShowAuthed -->
+        <div *appShowAuthed="false">
+          <!-- Changed ui-sref to routerLink -->
+          <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">sign up</a> to add comments on this article.
         </div>
 
-        <comment ng-repeat="cmt in $ctrl.comments"
-          data="cmt"
-          delete-cb="$ctrl.deleteComment(cmt.id, $index)">
-        </comment>
-
+        <!-- Changed ng-repeat to *ngFor and updated component binding syntax -->
+        <app-comment *ngFor="let cmt of comments; let i = index"
+          [data]="cmt"
+          (deleteComment)="deleteComment(cmt.id, i)">
+        </app-comment>
 
       </div>
     </div>
 
   </div>
-
-
 
 </div>

@@ -5,8 +5,23 @@
   "author": "Thinkster",
   "license": "MIT",
   "dependencies": {
-    "angular": "^1.5.0-rc.2",
-    "angular-ui-router": "^0.4.2",
+    // Removed AngularJS dependencies
+    // "angular": "^1.5.0-rc.2",
+    // "angular-ui-router": "^0.4.2",
+    
+    // Added Angular 12 core dependencies
+    "@angular/core": "^12.2.0",
+    "@angular/common": "^12.2.0",
+    "@angular/compiler": "^12.2.0",
+    "@angular/platform-browser": "^12.2.0",
+    "@angular/platform-browser-dynamic": "^12.2.0",
+    "@angular/router": "^12.2.0",
+    "@angular/forms": "^12.2.0",
+    "rxjs": "~6.6.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.11.4",
+    
+    // Kept existing dependencies that are still relevant
     "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0",
     "browser-sync": "^2.11.1",
@@ -21,5 +36,12 @@
     "marked": "^0.3.5",
     "merge-stream": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "devDependencies": {
+    // Added TypeScript as a dev dependency for Angular 12
+    "typescript": "~4.3.5",
+    "@angular-devkit/build-angular": "~12.2.0",
+    "@angular/cli": "~12.2.0",
+    "@angular/compiler-cli": "^12.2.0"
   }
 }
