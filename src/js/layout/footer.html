@@ -1,8 +1,16 @@
+<!-- 
+  Angular 12 footer component template
+  Changes made:
+  - Replaced ui-sref with routerLink for navigation
+  - Changed ng-bind with Angular interpolation syntax
+  - Kept the date pipe but updated to Angular syntax
+  - Removed one-time binding syntax (::)
+-->
 <footer>
   <div class="container">
-    <a class="logo-font" ui-sref="app.home" ng-bind="::$ctrl.appName | lowercase"></a>
+    <a class="logo-font" [routerLink]="['/']">{{ $ctrl.appName | lowercase }}</a>
     <span class="attribution">
-      &copy; {{::$ctrl.date | date:'yyyy'}}.
+      &copy; {{ $ctrl.date | date:'yyyy' }}.
       An interactive learning project from <a href="https://thinkster.io">Thinkster</a>.
       Code licensed under MIT.
     </span>

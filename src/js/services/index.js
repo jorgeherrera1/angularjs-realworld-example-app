@@ -1,26 +1,37 @@
-import angular from 'angular';
+// Import Angular core modules
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
-// Create the module where our functionality can attach to
-let servicesModule = angular.module('app.services', []);
-
-
+// Import services
 import UserService from './user.service';
-servicesModule.service('User', UserService);
-
-import JwtService from './jwt.service'
-servicesModule.service('JWT', JwtService);
-
+import JwtService from './jwt.service';
 import ProfileService from './profile.service';
-servicesModule.service('Profile', ProfileService);
-
 import ArticlesService from './articles.service';
-servicesModule.service('Articles', ArticlesService);
-
 import CommentsService from './comments.service';
-servicesModule.service('Comments', CommentsService);
-
 import TagsService from './tags.service';
-servicesModule.service('Tags', TagsService);
 
+/**
+ * Services module for the application
+ * 
+ * This replaces the AngularJS module 'app.services' with an Angular NgModule
+ * that provides all the services to the application.
+ */
+@NgModule({
+  imports: [
+    // Import HttpClientModule to use Angular's HTTP client
+    HttpClientModule
+  ],
+  providers: [
+    // Register all services as providers
+    UserService,
+    JwtService,
+    ProfileService,
+    ArticlesService,
+    CommentsService,
+    TagsService
+  ]
+})
+export class ServicesModule {}
 
-export default servicesModule;
+// Export the module for use in other feature modules
+export default ServicesModule;

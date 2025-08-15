@@ -1,10 +1,10 @@
 <button
   class="btn btn-sm action-btn"
-  ng-class="{ 'disabled': $ctrl.isSubmitting,
-              'btn-outline-secondary': !$ctrl.user.following,
-              'btn-secondary': $ctrl.user.following }"
-  ng-click="$ctrl.submit()">
+  [ngClass]="{ 'disabled': isSubmitting,
+              'btn-outline-secondary': !user.following,
+              'btn-secondary': user.following }"
+  (click)="submit()">
   <i class="ion-plus-round"></i>
   &nbsp;
-  {{ $ctrl.user.following ? 'Unfollow' : 'Follow' }} {{ $ctrl.user.username }}
+  {{ user.following ? 'Unfollow' : 'Follow' }} {{ user.username }}
 </button>

@@ -1,51 +1,54 @@
-class FavoriteBtnCtrl {
-  constructor(User, Articles, $state) {
-    'ngInject';
+// favorite-btn.component.ts
+import { Component, Input } from '@angular/core';
+import { UserService } from '../../services/user.service';
+import { ArticlesService } from '../../services/articles.service';
+import { Router } from '@angular/router';
 
-    this._User = User;
-    this._Articles = Articles;
-    this._$state = $state;
+@Component({
+  selector: 'favorite-btn',
+  templateUrl: './favorite-btn.html'
+})
+export class FavoriteBtnComponent {
+  // Changed from bindings to @Input decorator
+  @Input() article: any;
+  
+  isSubmitting = false;
 
-  }
+  // Injecting Angular services instead of using 'ngInject'
+  constructor(
+    private userService: UserService,
+    private articlesService: ArticlesService,
+    private router: Router
+  ) {}
 
   submit() {
     this.isSubmitting = true;
 
-    if (!this._User.current) {
-      this._$state.go('app.register');
+    // Check if user is logged in
+    if (!this.userService.current) {
+      // Using Angular Router instead of $state
+      this.router.navigateByUrl('/register');
       return;
     }
 
     if (this.article.favorited) {
-      this._Articles.unfavorite(this.article.slug).then(
+      // Using Angular service instead of _Articles
+      this.articlesService.unfavorite(this.article.slug).then(
         () => {
           this.isSubmitting = false;
           this.article.favorited = false;
           this.article.favoritesCount--;
         }
-      )
-
+      );
     } else {
-      this._Articles.favorite(this.article.slug).then(
+      // Using Angular service instead of _Articles
+      this.articlesService.favorite(this.article.slug).then(
         () => {
           this.isSubmitting = false;
           this.article.favorited = true;
           this.article.favoritesCount++;
         }
-      )
+      );
     }
-
   }
-
 }
-
-let FavoriteBtn= {
-  bindings: {
-    article: '='
-  },
-  transclude: true,
-  controller: FavoriteBtnCtrl,
-  templateUrl: 'components/buttons/favorite-btn.html'
-};
-
-export default FavoriteBtn;

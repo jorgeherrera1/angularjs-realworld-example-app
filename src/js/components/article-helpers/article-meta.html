@@ -1,17 +1,23 @@
+<!-- article-meta.html - Upgraded from AngularJS to Angular 12 -->
 <div class="article-meta">
-  <a ui-sref="app.profile.main({ username:$ctrl.article.author.username })">
-    <img ng-src="{{$ctrl.article.author.image}}" />
+  <!-- Changed ui-sref to routerLink for Angular routing -->
+  <a [routerLink]="['/profile', article.author.username]">
+    <!-- Changed ng-src to [src] for image binding -->
+    <img [src]="article.author.image" />
   </a>
 
   <div class="info">
+    <!-- Changed ui-sref to routerLink and ng-bind to interpolation -->
     <a class="author"
-      ui-sref="app.profile.main({ username:$ctrl.article.author.username })"
-      ng-bind="$ctrl.article.author.username">
+      [routerLink]="['/profile', article.author.username]">
+      {{ article.author.username }}
     </a>
-    <span class="date"
-      ng-bind="$ctrl.article.createdAt | date: 'longDate' ">
+    <!-- Changed ng-bind to interpolation and pipe syntax remains similar -->
+    <span class="date">
+      {{ article.createdAt | date: 'longDate' }}
     </span>
   </div>
 
-  <ng-transclude></ng-transclude>
+  <!-- ng-transclude replaced with ng-content for content projection -->
+  <ng-content></ng-content>
 </div>

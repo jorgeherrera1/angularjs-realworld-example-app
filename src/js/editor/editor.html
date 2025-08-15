@@ -1,23 +1,37 @@
+<!-- 
+  This is the upgraded Angular 12 version of editor.html
+  Changes made:
+  - Replaced ng-disabled with [disabled]
+  - Replaced ng-model with [(ngModel)]
+  - Replaced ng-keyup with (keyup.enter)
+  - Replaced ng-repeat with *ngFor
+  - Replaced ng-click with (click)
+  - Replaced {{ tag }} interpolation syntax (kept the same)
+  - Replaced $ctrl references with direct component properties
+-->
+
 <div class="editor-page">
   <div class="container page">
     <div class="row">
       <div class="col-md-10 offset-md-1 col-xs-12">
 
-        <list-errors errors="$ctrl.errors"></list-errors>
+        <list-errors [errors]="errors"></list-errors>
 
-        <form>
-          <fieldset ng-disabled="$ctrl.isSubmitting">
+        <form (ngSubmit)="submit()">
+          <fieldset [disabled]="isSubmitting">
 
             <fieldset class="form-group">
               <input class="form-control form-control-lg"
-                ng-model="$ctrl.article.title"
+                [(ngModel)]="article.title"
+                name="title"
                 type="text"
                 placeholder="Article Title" />
             </fieldset>
 
             <fieldset class="form-group">
               <input class="form-control"
-                ng-model="$ctrl.article.description"
+                [(ngModel)]="article.description"
+                name="description"
                 type="text"
                 placeholder="What's this article about?" />
             </fieldset>
@@ -25,7 +39,8 @@
             <fieldset class="form-group">
               <textarea class="form-control"
                 rows="8"
-                ng-model="$ctrl.article.body"
+                [(ngModel)]="article.body"
+                name="body"
                 placeholder="Write your article (in markdown)">
               </textarea>
             </fieldset>
@@ -34,19 +49,20 @@
               <input class="form-control"
                 type="text"
                 placeholder="Enter tags"
-                ng-model="$ctrl.tagField"
-                ng-keyup="$event.keyCode == 13 && $ctrl.addTag()" />
+                [(ngModel)]="tagField"
+                name="tagField"
+                (keyup.enter)="addTag()" />
 
               <div class="tag-list">
-                <span ng-repeat="tag in $ctrl.article.tagList"
+                <span *ngFor="let tag of article.tagList"
                   class="tag-default tag-pill">
-                  <i class="ion-close-round" ng-click="$ctrl.removeTag(tag)"></i>
+                  <i class="ion-close-round" (click)="removeTag(tag)"></i>
                   {{ tag }}
                 </span>
               </div>
             </fieldset>
 
-            <button class="btn btn-lg pull-xs-right btn-primary" type="button" ng-click="$ctrl.submit()">
+            <button class="btn btn-lg pull-xs-right btn-primary" type="submit">
               Publish Article
             </button>
 

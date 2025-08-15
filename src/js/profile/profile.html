@@ -1,3 +1,16 @@
+<!-- 
+  Angular 12 Profile Component Template
+  Changes made:
+  - Replaced ng-src with [src]
+  - Replaced ng-bind with interpolation syntax {{ }}
+  - Replaced ui-sref with routerLink
+  - Replaced ui-sref-active with routerLinkActive
+  - Replaced $ctrl references with direct component properties
+  - Replaced ui-view with router-outlet
+  - Updated follow-btn component to use property binding syntax
+  - Replaced ng-show and ng-hide with *ngIf
+-->
+
 <div class="profile-page">
 
   <!-- User's basic info & action buttons -->
@@ -6,17 +19,17 @@
       <div class="row">
         <div class="col-xs-12 col-md-10 offset-md-1">
 
-          <img ng-src="{{::$ctrl.profile.image}}" class="user-img" />
-          <h4 ng-bind="::$ctrl.profile.username"></h4>
-          <p ng-bind="::$ctrl.profile.bio"></p>
+          <img [src]="profile.image" class="user-img" />
+          <h4>{{ profile.username }}</h4>
+          <p>{{ profile.bio }}</p>
 
-          <a ui-sref="app.settings"
+          <a [routerLink]="['/settings']"
             class="btn btn-sm btn-outline-secondary action-btn"
-            ng-show="$ctrl.isUser">
+            *ngIf="isUser">
             <i class="ion-gear-a"></i> Edit Profile Settings
           </a>
 
-          <follow-btn user="$ctrl.profile" ng-hide="$ctrl.isUser"></follow-btn>
+          <app-follow-btn [user]="profile" *ngIf="!isUser"></app-follow-btn>
 
         </div>
       </div>
@@ -35,16 +48,16 @@
 
             <li class="nav-item">
               <a class="nav-link active"
-                ui-sref-active="active"
-                ui-sref="app.profile.main({username: $ctrl.profile.username})">
+                routerLinkActive="active"
+                [routerLink]="['/profile', profile.username]">
                 My Articles
               </a>
             </li>
 
             <li class="nav-item">
               <a class="nav-link"
-                ui-sref-active="active"
-                ui-sref="app.profile.favorites({username: $ctrl.profile.username})">
+                routerLinkActive="active"
+                [routerLink]="['/profile', profile.username, 'favorites']">
                 Favorited Articles
               </a>
             </li>
@@ -53,7 +66,7 @@
         </div>
 
         <!-- List of articles -->
-        <div ui-view></div>
+        <router-outlet></router-outlet>
 
 
       </div>

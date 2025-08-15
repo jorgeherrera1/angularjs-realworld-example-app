@@ -1,20 +1,25 @@
+<!-- Updated from AngularJS to Angular 12 -->
+<!-- Replaced ng-repeat with *ngFor -->
+<!-- Changed $ctrl references to direct component properties -->
+<!-- Updated conditional display using *ngIf instead of ng-show/ng-hide -->
+
 <article-preview
-  article="article"
-  ng-repeat="article in $ctrl.list">
+  [article]="article"
+  *ngFor="let article of list">
 </article-preview>
 
 <div class="article-preview"
-  ng-hide="!$ctrl.loading">
+  *ngIf="loading">
   Loading articles...
 </div>
 
 <div class="article-preview"
-  ng-show="!$ctrl.loading && !$ctrl.list.length">
+  *ngIf="!loading && !list.length">
   No articles are here... yet.
 </div>
 
 <list-pagination
- total-pages="$ctrl.listConfig.totalPages"
- current-page="$ctrl.listConfig.currentPage"
- ng-hide="$ctrl.listConfig.totalPages <= 1">
+ [totalPages]="listConfig.totalPages"
+ [currentPage]="listConfig.currentPage"
+ *ngIf="listConfig.totalPages > 1">
 </list-pagination>

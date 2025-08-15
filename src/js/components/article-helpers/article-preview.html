@@ -1,19 +1,25 @@
 <div class="article-preview">
-  <article-meta article="$ctrl.article">
-    <favorite-btn
-      article="$ctrl.article"
+  <!-- Changed from article-meta to app-article-meta to follow Angular component naming conventions -->
+  <app-article-meta [article]="article">
+    <!-- Changed from favorite-btn to app-favorite-btn -->
+    <!-- Replaced $ctrl references with direct property binding -->
+    <app-favorite-btn
+      [article]="article"
       class="pull-xs-right">
-      {{$ctrl.article.favoritesCount}}
-    </favorite-btn>
-  </article-meta>
+      {{article.favoritesCount}}
+    </app-favorite-btn>
+  </app-article-meta>
 
-  <a ui-sref="app.article({ slug: $ctrl.article.slug })" class="preview-link">
-    <h1 ng-bind="$ctrl.article.title"></h1>
-    <p ng-bind="$ctrl.article.description"></p>
+  <!-- Replaced ui-sref with routerLink for Angular routing -->
+  <a [routerLink]="['/article', article.slug]" class="preview-link">
+    <!-- Replaced ng-bind with interpolation syntax -->
+    <h1>{{article.title}}</h1>
+    <p>{{article.description}}</p>
     <span>Read more...</span>
     <ul class="tag-list">
+      <!-- Replaced ng-repeat with *ngFor directive -->
       <li class="tag-default tag-pill tag-outline"
-        ng-repeat="tag in $ctrl.article.tagList">
+        *ngFor="let tag of article.tagList">
         {{tag}}
       </li>
     </ul>

@@ -1,20 +1,34 @@
-class ArticleListCtrl {
-  constructor(Articles, $scope) {
-    'ngInject';
+// article-list.component.ts
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { ArticlesService } from '../../services/articles.service';
 
-    this._Articles = Articles;
+@Component({
+  selector: 'article-list',
+  templateUrl: './article-list.component.html' // Updated path to match Angular conventions
+})
+export class ArticleListComponent implements OnInit, OnDestroy {
+  // Convert bindings to @Input properties
+  @Input() limit: number;
+  @Input() listConfig: any;
 
+  loading: boolean = false;
+  list: Array<any> = [];
+
+  // Constructor with Angular DI
+  constructor(private articlesService: ArticlesService) {
+    // Removed 'ngInject' as it's not needed in Angular
+  }
+
+  ngOnInit() {
+    // Initialize the component
     this.setListTo(this.listConfig);
+    
+    // Note: $scope.$on events are removed in favor of a service-based approach
+    // or parent-child communication with @Output EventEmitter
+  }
 
-
-    $scope.$on('setListTo', (ev, newList) => {
-      this.setListTo(newList);
-    });
-
-    $scope.$on('setPageTo', (ev, pageNumber) => {
-      this.setPageTo(pageNumber);
-    });
-
+  ngOnDestroy() {
+    // Clean up any subscriptions if needed
   }
 
   setListTo(newList) {
@@ -33,8 +47,7 @@ class ArticleListCtrl {
     this.runQuery();
   }
 
-
- runQuery() {
+  runQuery() {
     // Show the loading indicator
     this.loading = true;
     this.listConfig = this.listConfig || {};
@@ -56,10 +69,10 @@ class ArticleListCtrl {
     // Add the offset filter
     queryConfig.filters.offset = (this.limit * (this.listConfig.currentPage - 1));
 
-    // Run the query
-    this._Articles
+    // Run the query - converted from promise to subscribe pattern
+    this.articlesService
       .query(queryConfig)
-      .then(
+      .subscribe(
         (res) => {
           this.loading = false;
 
@@ -70,16 +83,7 @@ class ArticleListCtrl {
         }
       );
   }
-
 }
 
-let ArticleList = {
-  bindings: {
-    limit: '=',
-    listConfig: '='
-  },
-  controller: ArticleListCtrl,
-  templateUrl: 'components/article-helpers/article-list.html'
-};
-
-export default ArticleList;
+// Note: The ArticleList object with bindings is removed as it's replaced by the @Component decorator
+// and @Input properties in the class definition above

@@ -1,10 +1,17 @@
 <nav>
   <ul class="pagination">
 
+    <!-- 
+    Changes made:
+    - Replaced ng-repeat with *ngFor
+    - Replaced ng-class with [class.active]
+    - Replaced ng-click with (click)
+    - Changed $ctrl references to direct component properties
+    -->
     <li class="page-item"
-      ng-class="{active: pageNumber === $ctrl.currentPage }"
-      ng-repeat="pageNumber in $ctrl.pageRange($ctrl.totalPages)"
-      ng-click="$ctrl.changePage(pageNumber)">
+      [class.active]="pageNumber === currentPage"
+      *ngFor="let pageNumber of pageRange(totalPages)"
+      (click)="changePage(pageNumber)">
 
       <a class="page-link" href="">{{ pageNumber }}</a>
 

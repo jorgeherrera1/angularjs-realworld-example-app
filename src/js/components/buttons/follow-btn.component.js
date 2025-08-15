@@ -1,50 +1,54 @@
-class FollowBtnCtrl {
-  constructor(Profile, User, $state) {
-    'ngInject';
+// Import necessary Angular decorators and dependencies
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { ProfileService } from '../../services/profile.service';
+import { UserService } from '../../services/user.service';
 
-    this._Profile = Profile;
-    this._User = User;
+@Component({
+  selector: 'follow-btn',
+  templateUrl: './follow-btn.html'
+})
+export class FollowBtnComponent {
+  // Convert the binding to @Input decorator
+  @Input() user: any;
+  
+  isSubmitting = false;
 
-    this._$state = $state;
-  }
+  // Replace constructor injection with Angular's DI system
+  // Remove 'ngInject' as it's not needed in Angular
+  constructor(
+    private profileService: ProfileService, // renamed from _Profile
+    private userService: UserService, // renamed from _User
+    private router: Router // replaced _$state with Angular Router
+  ) {}
 
   submit() {
     this.isSubmitting = true;
 
-    if (!this._User.current) {
-      this._$state.go('app.register');
+    // Check if user is logged in
+    if (!this.userService.current) {
+      // Use Angular Router instead of ui-router
+      this.router.navigateByUrl('/register');
       return;
     }
 
     // If following already, unfollow
     if (this.user.following) {
-      this._Profile.unfollow(this.user.username).then(
+      this.profileService.unfollow(this.user.username).then(
         () => {
           this.isSubmitting = false;
           this.user.following = false;
         }
-      )
+      );
 
     // Otherwise, follow them
     } else {
-      this._Profile.follow(this.user.username).then(
+      this.profileService.follow(this.user.username).then(
         () => {
           this.isSubmitting = false;
           this.user.following = true;
         }
-      )
+      );
     }
-
-
   }
 }
-
-let FollowBtn= {
-  bindings: {
-    user: '='
-  },
-  controller: FollowBtnCtrl,
-  templateUrl: 'components/buttons/follow-btn.html'
-};
-
-export default FollowBtn;

@@ -1,22 +1,34 @@
-<article-meta article="$ctrl.article">
+<!-- 
+  Upgraded from Angular 1.x to Angular 12
+  Changes made:
+  - Replaced ng-show with *ngIf
+  - Replaced ng-hide with *ngIf with negation
+  - Replaced ng-class with [ngClass]
+  - Replaced ng-click with (click)
+  - Removed $ctrl references from property bindings
+  - Changed ui-sref to routerLink
+  - Replaced {{ }} expressions to maintain the same functionality
+-->
 
-  <span ng-show="$ctrl.canModify">
+<article-meta [article]="article">
+
+  <span *ngIf="canModify">
     <a class="btn btn-sm btn-outline-secondary"
-      ui-sref="app.editor({ slug: $ctrl.article.slug })">
+      [routerLink]="['/editor', article.slug]">
       <i class="ion-edit"></i> Edit Article
     </a>
 
     <button class="btn btn-sm btn-outline-danger"
-      ng-class="{disabled: $ctrl.isDeleting}"
-      ng-click="$ctrl.deleteArticle()">
+      [ngClass]="{disabled: isDeleting}"
+      (click)="deleteArticle()">
       <i class="ion-trash-a"></i> Delete Article
     </button>
   </span>
 
-  <span ng-hide="$ctrl.canModify">
-    <follow-btn user="$ctrl.article.author"></follow-btn>
-    <favorite-btn article="$ctrl.article">
-      {{ $ctrl.article.favorited ? 'Unfavorite' : 'Favorite' }} Article <span class="counter">({{$ctrl.article.favoritesCount}})</span>
+  <span *ngIf="!canModify">
+    <follow-btn [user]="article.author"></follow-btn>
+    <favorite-btn [article]="article">
+      {{ article.favorited ? 'Unfavorite' : 'Favorite' }} Article <span class="counter">({{article.favoritesCount}})</span>
     </favorite-btn>
   </span>
 

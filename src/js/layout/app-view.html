@@ -1,5 +1,10 @@
+<!-- 
+  Updated from AngularJS to Angular 12
+  - Replaced ui-view with router-outlet for Angular routing
+  - Kept app-header and app-footer components which will need to be properly declared in the Angular module
+-->
 <app-header></app-header>
 
-<div ui-view></div>
+<router-outlet></router-outlet>
 
 <app-footer></app-footer>

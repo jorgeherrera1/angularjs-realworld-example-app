@@ -1,1 +1,7 @@
-<article-list limit="5" list-config="$ctrl.listConfig"></article-list>
+<!-- 
+  Updated from AngularJS to Angular:
+  - Changed attribute binding syntax from list-config="$ctrl.listConfig" to [listConfig]="listConfig"
+  - Removed $ctrl reference as component properties are directly accessible in Angular templates
+  - Maintained the same component structure but with Angular binding syntax
+-->
+<article-list limit="5" [listConfig]="listConfig"></article-list>

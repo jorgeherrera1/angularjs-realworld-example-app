@@ -1,7 +1,7 @@
 <button class="btn btn-sm"
-  ng-class="{ 'disabled' : $ctrl.isSubmitting,
-              'btn-outline-primary': !$ctrl.article.favorited,
-              'btn-primary': $ctrl.article.favorited }"
-  ng-click="$ctrl.submit()">
-  <i class="ion-heart"></i> <ng-transclude></ng-transclude>
+  [ngClass]="{ 'disabled' : isSubmitting,
+              'btn-outline-primary': !article.favorited,
+              'btn-primary': article.favorited }"
+  (click)="submit()">
+  <i class="ion-heart"></i> <ng-content></ng-content>
 </button>
